@@ -1,0 +1,139 @@
+<!Doctype <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+</head>
+<body>
+    <h1>ScaleTech technical task</h1>
+    <h5>Please Check the Results in Console</h5>
+    <button onclick="taskFirst()">Task 1</button>
+    <button onclick="setTimeout(taskSecond, 1000);">Task 2</button>
+    <button onclick="setTimeout(taskThird, 1000);">Task 3</button>
+
+    <script>
+        function taskFirst(){
+            let queue = [];
+            let numbers = [1,2,3,4,5]
+            let iteration =10;
+
+            while(iteration!=0){
+                var rand = numbers[Math.floor(Math.random() * numbers.length)];
+                console.log("number to be added "+rand);
+                if(queue.length == 0){
+                    queue.push(rand);
+                }
+                else{
+                    let index=0;
+                    queue.map((q)=>{
+                        if(q==rand && index== 0){
+                            index=queue.indexOf(q);
+                        }
+                    })
+                    if(index==0){
+                        if(queue[0]===rand){
+                            continue;
+                        }
+                        if(queue.length==5){
+                            queue.splice(queue.length-1,1);
+                        }
+                        queue.unshift(rand);
+                    }else{
+                        queue.splice(index,1);
+                        queue.unshift(rand);
+                    }
+                }
+                console.log(queue);
+                iteration=iteration-1;
+            }
+        }
+        function taskSecond(){
+            let userPoints=1000;
+            let betNumber=1;
+            console.log("Welcome to Bet Game");
+            var game=setInterval(function(){betNumber=betNumber+1;
+            if (betNumber === 1001) {
+                clearInterval(game);
+            }
+            userPoints=betGame(betNumber,userPoints)},1000);
+            console.log("Total Earned User Points are "+userPoints);
+        }
+        function betGame(betNumber,userPoints){
+            let numbers = [1, 0, 2, 0, 3, 0, 4, 0, 5, 0];
+            let creditedAmount=0;
+            let bet=10;
+            var rand = numbers[Math.floor(Math.random() * numbers.length)];
+            creditedAmount = bet * rand;
+            userPoints = userPoints + creditedAmount;
+            console.log("Credited: " + creditedAmount + " and Amount is: " + userPoints);
+            return userPoints;
+        }
+        function taskThird(){
+            let maxTemp=100;
+            //Set totalDevices to 10 to check if all the functions working as there are less chances of getting devices as i have used random to generate reading from total dives
+            let totalDevices=10000;
+            let tempDiff=0;
+            let readingList=[];
+            let reading={
+                deviceNumber:0,
+                temp:0,
+                timestamp:new Date().getTime()
+            }
+            let testingForHowMuchTime=20;
+            var testReading=setInterval(function(){
+                if(testingForHowMuchTime==0){
+                    clearInterval(testReading);
+                }else{
+                    let latestReading = checkReading(totalDevices,maxTemp);
+                    reading={...latestReading};
+                    let Email = shouldEmail(readingList,latestReading);
+                    readingList.push(reading);
+                }
+            },1000);
+            
+        }
+        function checkReading(totalDevices,maxTemp){
+            var randomDevice= Math.floor(Math.random() * totalDevices+1);
+            var randomTemperature= Math.floor(Math.random() * maxTemp+1);
+            let reading={
+                deviceNumber:randomDevice,
+                temp:randomTemperature,
+                timestamp : new Date().getTime()
+            }
+            console.log("Latest Reading is for device "+reading.deviceNumber+" and temp is "+reading.temp);
+            return reading;
+        }
+        function sendEmail(latestReading){
+            let emailLogs=[];
+            let logFormat={
+                timestamp:new Date().getTime(),
+                reading:{...latestReading}
+            }
+            console.log("Email Sent");
+            //Generated Google Api Credentials but cant share as the Url is uniue and asl always confidential
+            // We can connect it through thus send the the email accordingly 
+        }
+        function shouldEmail(readingList,latestReading){
+            let List = [...readingList];
+            let diffTemp=0;
+            let diffTime=0;
+            List.map((reading)=>{
+                if(reading.deviceNumber===latestReading.deviceNumber){
+                    diffTime = latestReading.timestamp-reading.timestamp;
+                    diffTemp = latestReading.temp - reading.temp;
+                    if(diffTime <= 180000 && diffTemp >= 10){
+                        console.log("Diff of Temp Found "+diffTemp);
+                        sendEmail(latestReading);
+                        return true;
+                    }
+                }
+            });
+            return false;
+        } 
+    </script>
+</body>
+</html>
